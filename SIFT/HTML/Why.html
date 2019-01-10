@@ -1,0 +1,399 @@
+<html>
+<head>
+<title>CS 589 Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #e0e0e0;
+}
+nav {
+	line-height: 30 px
+	background-color: #eeeeee;
+	height: 300px
+	width: 100px;
+	float: left;
+	padding: 10px;
+}
+menu {
+    display: block;
+    list-style-type: disc;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 40px;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 40px;
+	margin: 25px 0px 0px 0px;
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	text-align: center;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+	font-size: 40px;
+}
+
+#headersub {
+	font-size: 40x;
+	color: #ccc;
+	width: 960px;
+	text-align: center;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+	
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: AC1414;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+#navcontainer ul
+{
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+}
+#navcontainer ul li { display: center; font-size: 18px; }
+
+#navcontainer ul li a
+{
+text-decoration: none;
+padding: .2em .1 em;
+color: #fff;
+background-color: #458b74;
+}
+#navcontainer ul li a:hover
+{
+color: #fff;
+background-color: #7cad9d;
+}
+li {
+    float: left;
+}
+
+a:link, a:visited {
+    display: block;
+    width: 120px;
+    font-weight: bold;
+    color: #FFFFFF;
+    background-color: #AC1414;
+    text-align: center;
+    padding: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+a:hover, a:active {
+    background-color: #7A991A;
+}
+div.float {
+  float: center;
+  }
+  
+div.float p {
+   text-align: center;
+   }
+ .center{
+width: 150px;
+  margin: 40px auto;
+  
+}
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script>
+i=7
+j=7
+var min_index = 7;
+var max_index = 11;
+var fqn = function(id, type, i, j) {
+    return "images/"+id+"_"+type+"_"+i+"_"+j+".jpg";
+};
+var create_button = function(text) {
+    var button = document.createElement('button');
+    button.type = "button";
+    button.appendChild(document.createTextNode(text));
+    return button;
+}
+var set_hpass = function(label, i) {
+    label.innerHTML = "";
+    var pc = i;
+    label.appendChild(document.createTextNode("Highpass: "+pc));
+}
+var set_lpass = function(label, j) {
+    label.innerHTML = "";
+    var pc = j
+    label.appendChild(document.createTextNode("Lowpass: "+pc));
+}
+var add_row_contents = function(id) {
+    console.log("adding", id);
+
+    var container = document.getElementById(id);
+   
+    var buttoncontainer = document.createElement('td');
+    buttoncontainer.className = "controls";
+    container.appendChild(buttoncontainer);
+
+
+    var comimg = document.createElement('td');
+    comimg.className = "imgcell";
+    var comimg_img = document.createElement('img');
+    comimg_img.src = fqn(id, "comimg", 1, 1);
+    comimg.appendChild(comimg_img);
+    container.appendChild(comimg);
+
+    var chart = document.createElement('td');
+    chart.className = "imgcell";
+    var chart_img = document.createElement('img');
+    chart_img.src = fqn(id, "chart", 1, 1);
+    chart.appendChild(chart_img);
+    container.appendChild(chart);
+
+    var low = document.createElement('div');
+    low.className = "buttonblock";
+    var heightlabel = document.createElement('span');
+    set_lpass(heightlabel, 1);
+    low.appendChild(heightlabel);
+    buttoncontainer.appendChild(low);
+
+    var high = document.createElement('div');
+    high.className = "buttonblock";
+    var widthlabel = document.createElement('span');
+    set_hpass(widthlabel, 1);
+    high.appendChild(widthlabel);
+    buttoncontainer.appendChild(high);
+    
+
+    var high_less = create_button('-');
+    var high_more = create_button('+');
+    var low_less = create_button('-');
+    var low_more = create_button('+');
+
+    high.appendChild(high_less);
+    high.appendChild(high_more);
+    low.appendChild(low_less);
+    low.appendChild(low_more);
+
+    var i = 7;
+    var j = 7;
+
+
+    high_less.onclick = function() {
+        high_more.disabled = false;
+        
+        j = j - 4;
+        if (j <= min_index) {
+            j = min_index;
+            high_less.disabled = true;
+        }
+        comimg_img.src = "23 low7_high11.jpg";
+        chart_img.src = "23 low7_high11 frequency.png";
+        set_hpass(widthlabel, j);
+        set_lpass(heightlabel, i);
+    };
+
+    high_more.onclick = function() {
+        high_less.disabled = false;
+        
+        j = j + 4;
+        if (j >= max_index) {
+            j = max_index;
+            high_more.disabled = true;
+        }
+        comimg_img.src = "22 low 11_high 11.jpg";
+        chart_img.src = "22 low11_high11 frequency.png";
+        set_hpass(widthlabel, j);
+        set_lpass(heightlabel, i);
+    };    
+
+    low_less.onclick = function() {
+        low_more.disabled = false;
+        
+        i = i - 4;
+        if (i <= min_index) {
+            i = min_index;
+            low_less.disabled = true;
+        }
+        comimg_img.src = "24 low7_high7.jpg";
+        chart_img.src = "24 low7_high7 frequency.png";
+        set_hpass(widthlabel, j);
+        set_lpass(heightlabel, i);
+    };
+
+    low_more.onclick = function() {
+        low_less.disabled = false;
+        
+        i = i + 4;
+        if (i >= max_index) {
+            i = max_index;
+            low_more.disabled = true;
+        }
+        comimg_img.src = "21 low11_high7.jpg";
+        chart_img.src = "21 low11_high7 frequency.png";
+        set_hpass(widthlabel, j);
+        set_lpass(heightlabel, i);
+    };    
+
+}
+window.onload = function() {
+    var containers = document.getElementsByClassName('resizableimage');
+    for (var i = 0; i < containers.length; i++) {
+        add_row_contents(containers[i].getAttribute('id'));
+    }
+}
+</script>
+
+
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<div id="header" >
+<div id="headersub">
+<h1>American University: CSC 589 <span style="color: #DE3737"></span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2>  </h2>
+
+<body>
+ </style>
+</head>
+<div style="float: center; padding: 20px">
+<td>
+<img src="1 church_matched.png" width="48%"/> &nbsp;
+<img src="ground truth.jpg"  width="48%"/> &nbsp;
+
+
+</div>
+
+<div id= "navcontainer" 
+div style="float: center; padding: 20px">
+<ul>
+<li> <a href="index.html"> Why? </a> </li>
+</div></ul>
+
+<div>
+<p> 	</p>
+<div style="float: left; padding: 20px">
+<h3> Why my code didn't work very well?</h3>
+<hr/>
+<div style="float: left; padding: 20px">
+<p align="left">My  algorithm (proj2.py, show_correspondence.py)didn&rsquo;t  work so well. For the Notre Dame pairs, I used 0.1 as Harris Corner detection  threshold, 64*64 window size, and 0.75 as ratio test threshold. My code used  20-30 minutes to generate 31 matches/3 bad matches=90.3% correct.  Although the ACC was acceptable, I was wondering why my code generated so few  points. </p>
+<p align="left">I tried different thresholds, Gaussian size/sigma, and window size, but  none of them would make a huge difference. Thus, I'm thinking other possible reasons.</p>
+<h4><strong>1. Harris Corner Detector?</strong></h4>
+<p>My first guess was  that the Harris Corner detection code might not be correct. Because for some  matching points shown on the ground truth image, my Harris Corner code didn&rsquo;t  even detected them as the interests points (see Figure 1)! </p>
+<p><img src="e.jpg"  width="70%"/></p>
+<p>&nbsp;</p>
+<p>Then I used <u>cv2.cornerHarris</u> (proj2_cv2.harris.py, show_correspondence_cv2.harris.py)  to check whether my Harris Corner code is correct. The parameter I used was  16*16 window size and 0.75 as ratio test threshold. As Figure 2 shows, the  results were better. I got 41 matches/3 bad matches=92.7% correct. Taken into  the limited time, I didn&rsquo;t try other algorithms. Anyway, the results were still  not good enough, which lead me to think over other possible causes.</p>
+<p>&nbsp;
+    <img src="f.png"  width="100%"/>&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<h4><strong>2. Transformation?</strong></h4>
+<h5>My second  guess was that my code wasn&rsquo;t so good at dealing angle changes. I actually  didn&rsquo;t do anything to handle the situation where same object/feature but with  different angles.</h5>
+<h5> Then I used another &ldquo;famous&rdquo; pair (Yosemite), which only  contains object translation but without any transformation. The algorithm I used was  0.05 as Harris Corner detection, 64*64 window size, 0.75 as ratio test  threshold.</h5>
+<h5> As Figure 3 shows, my code generated 106 matches in total, out of  which there was only 1 bad match. The ACC for this pair was 99.1%. I think this  might be the main reason why my code didn&rsquo;t work well. However, due to limited  time, I wasn&rsquo;t able to improve my code.</h5>
+    <img src="g.png"  width="100%"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    
