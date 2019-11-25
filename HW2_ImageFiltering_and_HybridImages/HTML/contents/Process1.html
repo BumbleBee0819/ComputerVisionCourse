@@ -230,18 +230,18 @@ div style="float: center; padding: 20px">
  </div>
 
 <h4> Process & Algorithm </h4><hr/>
- <h5 class="subheader"> In our imfilter definition, we first created two blank white templates: the size of the image plus padding, and the size of the final image (cutting padding out), which is the same resolution as the original images. Then we used two for-loops to add the padding with zeros based on the size of the filter (m x n). We used another for-loop to convolve using just the inner image as the center square (not padding) with the filter. We convolved each R G B separately. Then we cut off the padding area to get the final image. This filter supports grayscale and color because it convolves each R G B value separately and can do grayscale alone. It supports arbitrarily shaped filters because we add padding based on the size of the filter (left padding: m/2; right padding: m/2; top padding: n/2; bottom padding: n/2), where m x n is the filter size. <p>
+ <h5 class="subheader"> In the imfilter definition, I first created two blank white templates: the size of the image plus padding, and the size of the final image (cutting padding out), which is the same resolution as the original images. Then I used two for-loops to add the padding with zeros based on the size of the filter (m x n). I used another for-loop to convolve using just the inner image as the center square (not padding) with the filter. I convolved each R G B separately. Then I cut off the padding area to get the final image. This filter supports grayscale and color because it convolves each R G B value separately and can do grayscale alone. It supports arbitrarily shaped filters because I add padding based on the size of the filter (left padding: m/2; right padding: m/2; top padding: n/2; bottom padding: n/2), where m x n is the filter size. <p>
 
-<p> Our photos show some borders. This occurs firstly because we used zero padding, and secondly because we used very large kernels. As a result, the border values became particularly small. If we change to a smaller kernel size, e.g. 5 or 7, or used mirror padding, the border would almost disappear. <p>
+<p> The photos show some borders. This occurs firstly because I used zero padding, and secondly because I used very large kernels. As a result, the border values became particularly small. If I change to a smaller kernel size, e.g. 5 or 7, or used mirror padding, the border would almost disappear. <p>
 
- <p>The Gaussian filter we used was created by Dr. Xiao. It is based off of the Gaussian formula and MATLAB’s fspecial Gaussian filter. <p>
+ <p>The Gaussian filter I used was created by Dr. Xiao. It is based off of the Gaussian formula and MATLAB’s fspecial Gaussian filter. <p>
  
-<p> We created the Gaussian kernel for the lowpass filter using the function we defined. To create the highpass filter, we used the formula (1-G), where G is another Gaussian filter. The filters have different sigmas.  Each sigma and kernel size is explained at the bottom of this document. We convolved our images (one highpass filter, one lowpass filter) using the imfilter function we defined. Then we combined the resulting highpass and lowpass images into a hybrid image. using the formula H = I1*G1 + I2*(1-G2). Each R G B value was added separately. <p>
+<p> I created the Gaussian kernel for the lowpass filter using the function I defined. To create the highpass filter, I used the formula (1-G), where G is another Gaussian filter. The filters have different sigmas.  Each sigma and kernel size is explained at the bottom of this document. I convolved the images (one highpass filter, one lowpass filter) using the imfilter function I defined. Then I combined the resulting highpass and lowpass images into a hybrid image. using the formula H = I1*G1 + I2*(1-G2). Each R G B value was added separately. <p>
 
 
-<p> We also calculated and displayed the FFT magnitude for the original images, filtered images, and hybrid image.<p>
+<p> I also calculated and displayed the FFT magnitude for the original images, filtered images, and hybrid image.<p>
 
-<p> To plot the cut-off frequencies, we plotted y as the magnitude in the Fourier domain and x as the frequency in the Fourier domain. We define the cut-off frequency as x when y = 0.5.<p>
+<p> To plot the cut-off frequencies, I plotted y as the magnitude in the Fourier domain and x as the frequency in the Fourier domain. I define the cut-off frequency as x when y = 0.5.<p>
  
 <p> The HTML website shows the lowpass and highpass images, the hybrid images, the cut-off frequency plots, and the magnitudes of the FFTs of all the images.<p> 
 
