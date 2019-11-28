@@ -213,7 +213,7 @@ def pyramids(image):
 #  4
 def image_buildup (L): 
    for i in range(len(L) - 1):
-       L[len(L)-2-i]=L[len(L)-2-i] + L[len(L)-1-i]
+       L[len(L)-2-i] = L[len(L)-2-i] + L[len(L)-1-i]
    return L[0] 
 
 

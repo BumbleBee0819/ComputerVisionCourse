@@ -30,19 +30,40 @@
 import cv2
 import numpy as np
 from scipy import signal
-import matplotlib as mpl
-mpl.use('tkagg')    #YAAA!!  this finally makes the Damn thing work
-import matplotlib.pyplot as plt
-from get_interest_points import get_interest_points
+from matplotlib import pyplot as plt
+#from get_interest_points import get_interest_points
+#from get_features import get_features
+#from match_features import match_features
 from show_correspondence import show_correspondence 
-from evaluate_correspondence import evaluate_correspondence
+#from evaluate_correspondence import evaluate_correspondence
 from math import sqrt
 
 
+# read in the notre dame images
+#image1 = cv2.imread('1 church1.jpg')
+#image2 = cv2.imread('1 church2.jpg')
 
+#image1 = cv2.imread('2 mountain1.jpg')
+#image2 = cv2.imread('2 mountain2.jpg')
+
+
+
+# convert to grayscale
+image1 =  cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+image2 =  cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+scale_factor = 0.5; #make images smaller to speed up the algorithm
+
+height1, width1 = image1.shape[:2]
+height2, width2 = image2.shape[:2]
+image1 = cv2.resize(image1,(width1/2, height1/2), interpolation = cv2.INTER_CUBIC)
+image2 = cv2.resize(image2,(width2/2, height1/2), interpolation = cv2.INTER_CUBIC)
+
+feature_width = 16; #width and height of each local feature, in pixels. 
 
 # %% Find distinctive points in each image. Szeliski 4.1.1
 # % !!! You will need to implement get_interest_points. !!!
+
 def matlab_style_gauss2D(shape,sigma):
     m,n = [(ss-1.)/2. for ss in shape]
     y,x = np.ogrid[-m:m+1,-n:n+1]
@@ -145,19 +166,36 @@ def plot_harris_points(image,filtered_coords):
 # calling the harris corner detector
 def get_interest_points(im, feature_width):
     
-    harrisim = compute_harris_response(im)
-    ''' change feature detector threshold here'''
-    filtered_coords = get_harris_points(harrisim,12,0.1)
-    plot_harris_points(im,filtered_coords)
+    #harrisim = compute_harris_response(im)
+    #filtered_coords = get_harris_points(harrisim,6,0.05)
+    dst=cv2.cornerHarris(im,2,5,0.1)
+    x=[]
+    y=[]
+    
+    
+    
+    for i in range(im.shape[0]):
+        for j in range(im.shape[1]):
+            if dst[i,j]>0.01*dst.max():
+                x.append(j)
+                y.append(i)
+   
+    #print filtered_coords.shape
+    #im[dst>0.01*dst.max()]=[0,0,255]
+    #cv2.imshow('dst',im)
+    
+    #plot_harris_points(im,filtered_coords)
     #print filtered_coords
-    x=np.zeros((len(filtered_coords)))
-    y=np.zeros((len(filtered_coords)))
-    for i in range(len(filtered_coords)):
-        [y[i],x[i]]=filtered_coords[i]
+    #x=np.zeros((len(filtered_coords)))
+    #y=np.zeros((len(filtered_coords)))
+    #for i in range(len(filtered_coords)):
+        #[y[i],x[i]]=filtered_coords[i]
+        
 
     return [x,y]
     
-
+[x1, y1] = get_interest_points(image1, feature_width)
+[x2, y2] = get_interest_points(image2, feature_width)
 
 
 
@@ -190,7 +228,11 @@ def fdegree(dx,dy):
 def gradient(imdx,imdy,x,y,width):
     bx=np.zeros((width,width))
     by=np.zeros((width,width))
+    '''
+    #bx=imdx[x-width/2:x+width/2,y-width/2:y+width/2]
+    #by=imdy[x-width/2:x+width/2,y-width/2:y+width/2]
     
+    '''
     a,b=imdx.shape
 
     #print x,y
@@ -205,7 +247,7 @@ def gradient(imdx,imdy,x,y,width):
                 by[i,j]=0
     
     
-    h=matlab_style_gauss2D((width,width),50)
+    h=matlab_style_gauss2D((width,width),10)
     bx=bx*h
     by=by*h
     bins=np.zeros((width*width/16,8))
@@ -215,7 +257,7 @@ def gradient(imdx,imdy,x,y,width):
             n=fdegree(bx[i,j],by[i,j])
             bins[i/(width/4)*(width/4)+j/(width/4),n]=bins[i/(width/4)*(width/4)+j/(width/4),n]+sqrt(bx[i,j]**2+by[i,j]**2)
 
-
+    
     #normalize
     bins=bins/sqrt((bins*bins).sum())
     for i in range(width*width/16):
@@ -226,13 +268,14 @@ def gradient(imdx,imdy,x,y,width):
     bins=bins/sqrt((bins*bins).sum())
     f=bins.flatten()
     return f
-
                 
 
 
 def get_features(image, x, y, feature_width):
     sobelx=np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
     sobely=np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
+    #sobelx=np.array([[-1,1],[0,0]])
+    #sobely=np.array([[-1,0],[1,0]])
 
     imdx = signal.convolve(image, sobelx, mode='same') # horizontal derivative
     imdy = signal.convolve(image, sobely, mode='same')  # vertical derivative
@@ -247,7 +290,8 @@ def get_features(image, x, y, feature_width):
             
     return features 
 
-
+image1_features = get_features(image1, x1, y1, feature_width)
+image2_features = get_features(image2, x2, y2, feature_width)
 
 
 # %% Match features. Szeliski 4.1.3
@@ -277,8 +321,12 @@ def match_features(features1, features2):
     # % Placeholder that you can delete. Random matches and confidences
     num_features1 = features1.shape[0]
     num_features2 = features2.shape[0]
+    print features1.shape[0]
+    print features2.shape[0]
+    
     # this is annoying for Python, if you want the number to be integer, you must specify its data type
     matches = np.zeros((num_features1, 2))
+    matches=matches.astype(int)
     d2=np.zeros((num_features1, num_features2))
     for i in range(num_features1):
         for j in range(num_features2):
@@ -288,16 +336,17 @@ def match_features(features1, features2):
     d2pie=np.sort(d2)
     ratio=ratio2(d2pie)
     
-    
     for i in range(num_features1):
         matches[i,0]=i
+        #print i,matches[i,0]
         
         for j in range(num_features2):
             if d2[i,j]==d2[i,:].min():
                 matches[i,1]=j
                 break
-    
-
+    print 'after'
+    print matches
+    matches=matches.astype(int)
     return matches,ratio
     
 
@@ -306,56 +355,14 @@ def match_features(features1, features2):
 
 
 
-
-
-
-
-# read in the notre dame images
-
-image1 = cv2.imread('1 church1.jpg')
-image2 = cv2.imread('1 church2.jpg')
-
-#image1 = cv2.imread('2 mountain1.jpg')
-#image2 = cv2.imread('2 mountain2.jpg')
-
-#image1 = cv2.imread('3 Capricho Gaudi2.jpg')
-#image2 = cv2.imread('3 Capricho Gaudi1.jpg')
-
-
-
-# convert to grayscale
-image1 =  cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-image2 =  cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-
-scale_factor = 0.3; #make images smaller to speed up the algorithm
-
-#height1, width1 = image1.shape[:2]
-#height2, width2 = image2.shape[:2]
-#image1 = cv2.resize(image1,(width1/2, height1/2), interpolation = cv2.INTER_CUBIC)
-#image2 = cv2.resize(image2,(width2/2,height1/2), interpolation = cv2.INTER_CUBIC)
-
-feature_width = 64; #width and height of each local feature, in pixels. 
-
-
-
-
-[x1, y1] = get_interest_points(image1, feature_width)
-[x2, y2] = get_interest_points(image2, feature_width)
-
-
-image1_features = get_features(image1, x1, y1, feature_width)
-image2_features = get_features(image2, x2, y2, feature_width)
-
-
 # % !!! You will need to implement get_features. !!!
 [matches, confidences] = match_features(image1_features, image2_features)
-
+print matches
 # % You might want to set 'num_pts_to_visualize' and 'num_pts_to_evaluate' to
 # % some constant once you start detecting hundreds of interest points,
 # % otherwise things might get too cluttered. You could also threshold based
 # % on confidence.
 num_pts_to_visualize = matches.shape[0]
-
 #show_correspondence(image1, image2, x1[matches[0:num_pts_to_visualize,0:1]],y1[matches[0:num_pts_to_visualize,0:1]],x2[matches[0:num_pts_to_visualize,1:2]],y2[matches[0:num_pts_to_visualize,1:2]])
 
 show_correspondence(image1,image2,x1,y1,x2,y2,matches,confidences)

@@ -30,16 +30,40 @@
 import cv2
 import numpy as np
 from scipy import signal
-import matplotlib as mpl
-mpl.use('tkagg')    #YAAA!!  this finally makes the Damn thing work
-import matplotlib.pyplot as plt
-from get_interest_points import get_interest_points
+from matplotlib import pyplot as plt
+#from get_interest_points import get_interest_points
+#from get_features import get_features
+#from match_features import match_features
 from show_correspondence import show_correspondence 
-from evaluate_correspondence import evaluate_correspondence
+#from evaluate_correspondence import evaluate_correspondence
 from math import sqrt
 
 
+# read in the notre dame images
 
+image1 = cv2.imread('1 church1.jpg')
+image2 = cv2.imread('1 church2.jpg')
+
+#image1 = cv2.imread('2 mountain1.jpg')
+#image2 = cv2.imread('2 mountain2.jpg')
+
+#image1 = cv2.imread('3 Capricho Gaudi2.jpg')
+#image2 = cv2.imread('3 Capricho Gaudi1.jpg')
+
+
+
+# convert to grayscale
+image1 =  cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+image2 =  cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+scale_factor = 0.5; #make images smaller to speed up the algorithm
+
+#height1, width1 = image1.shape[:2]
+#height2, width2 = image2.shape[:2]
+#image1 = cv2.resize(image1,(width1/2, height1/2), interpolation = cv2.INTER_CUBIC)
+#image2 = cv2.resize(image2,(width2/2,height1/2), interpolation = cv2.INTER_CUBIC)
+
+feature_width = 64; #width and height of each local feature, in pixels. 
 
 # %% Find distinctive points in each image. Szeliski 4.1.1
 # % !!! You will need to implement get_interest_points. !!!
@@ -157,7 +181,8 @@ def get_interest_points(im, feature_width):
 
     return [x,y]
     
-
+[x1, y1] = get_interest_points(image1, feature_width)
+[x2, y2] = get_interest_points(image2, feature_width)
 
 
 
@@ -247,7 +272,8 @@ def get_features(image, x, y, feature_width):
             
     return features 
 
-
+image1_features = get_features(image1, x1, y1, feature_width)
+image2_features = get_features(image2, x2, y2, feature_width)
 
 
 # %% Match features. Szeliski 4.1.3
@@ -304,47 +330,6 @@ def match_features(features1, features2):
     
 
 
-
-
-
-
-
-
-# read in the notre dame images
-
-image1 = cv2.imread('1 church1.jpg')
-image2 = cv2.imread('1 church2.jpg')
-
-#image1 = cv2.imread('2 mountain1.jpg')
-#image2 = cv2.imread('2 mountain2.jpg')
-
-#image1 = cv2.imread('3 Capricho Gaudi2.jpg')
-#image2 = cv2.imread('3 Capricho Gaudi1.jpg')
-
-
-
-# convert to grayscale
-image1 =  cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-image2 =  cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-
-scale_factor = 0.3; #make images smaller to speed up the algorithm
-
-#height1, width1 = image1.shape[:2]
-#height2, width2 = image2.shape[:2]
-#image1 = cv2.resize(image1,(width1/2, height1/2), interpolation = cv2.INTER_CUBIC)
-#image2 = cv2.resize(image2,(width2/2,height1/2), interpolation = cv2.INTER_CUBIC)
-
-feature_width = 64; #width and height of each local feature, in pixels. 
-
-
-
-
-[x1, y1] = get_interest_points(image1, feature_width)
-[x2, y2] = get_interest_points(image2, feature_width)
-
-
-image1_features = get_features(image1, x1, y1, feature_width)
-image2_features = get_features(image2, x2, y2, feature_width)
 
 
 # % !!! You will need to implement get_features. !!!
